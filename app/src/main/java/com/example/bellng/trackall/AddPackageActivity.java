@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.bellng.trackall.listitems.AusPost;
+import com.example.bellng.trackall.listitems.USPS;
 
 
 public class AddPackageActivity extends Activity {
@@ -28,7 +29,9 @@ public class AddPackageActivity extends Activity {
         trackingInput = (EditText) findViewById(R.id.trackingInput);
 
         spinner = (Spinner) findViewById(R.id.courierSpinner);
-        spinner.setAdapter(new ArrayAdapter<PackageType>(this,android.R.layout.simple_spinner_item,PackageType.values()));
+        ArrayAdapter<PackageType> adapter = new ArrayAdapter<PackageType>(this,android.R.layout.simple_spinner_item,PackageType.values());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
 
     @Override
@@ -52,6 +55,10 @@ public class AddPackageActivity extends Activity {
                 case AusPost:
                     AusPost itemObject = new AusPost(titleInput.getText().toString(),trackingInput.getText().toString());
                     i.putExtra("item", itemObject);
+                    break;
+                case USPS:
+                    USPS usps = new USPS(titleInput.getText().toString(),trackingInput.getText().toString());
+                    i.putExtra("item", usps);
                     break;
             }
             setResult(RESULT_OK,i);

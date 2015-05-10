@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-
-import com.example.bellng.trackall.listitems.AusPost;
 
 import java.util.ArrayList;
 
@@ -17,7 +20,9 @@ public class MainActivity extends Activity {
 
     public static final int ADD_PACKAGE_REQUEST = 0;
 
+    private SwipeRefreshLayout swipeLayout;
     private ListView itemListView;
+    private ItemAdapter itemAdapter;
     private ArrayList<ListItem> itemList;
 
     @Override
@@ -26,11 +31,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         itemListView = (ListView) findViewById(R.id.itemListView);
+        registerForContextMenu(itemListView);
 
-        //TODO: this should be finding the list from the database instead of initializing a new list every time
-        itemList = new ArrayList<ListItem>();
+        itemList = new ArrayList<ListItem>(); //TODO: this should be finding the list from the database instead of initializing a new list every time
 
-        itemListView.setAdapter(new ItemAdapter(this,itemList));
+        itemAdapter = new ItemAdapter(this,itemList);
+        itemListView.setAdapter(itemAdapter);
     }
 
     @Override
@@ -61,18 +67,42 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_PACKAGE_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // Grab the Monster object out of the intent
-                AusPost item = data.getParcelableExtra("item");
+                ListItem item = data.getParcelableExtra("item");
                 itemList.add(item);
-                // Apply new adapter and update count
-               // itemListView.setAdapter(new ItemAdapter(this, itemList));
+                itemAdapter.notifyDataSetChanged();
             }
         }
     }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId()==R.id.itemListView) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_onhold_item, menu);
+        }
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch(item.getItemId()) {
+            case R.id.action_edit:
+                //TODO: allow for input to change title of item (itemList.get(info.position))
+                return true;
+            case R.id.action_delete:
+                itemList.remove(info.position);
+                itemAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
 
     private class UpdateItemsTask extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... urls){
             return null;
         }
     }
+
+
 }
