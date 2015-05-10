@@ -3,7 +3,7 @@ package com.example.bellng.trackall;
 /**
  * Created by bellng on 10/05/2015.
  */
-interface ListItem {
+public interface ListItem {
 
     String getTitle();
 
@@ -11,4 +11,5 @@ interface ListItem {
 
     String getImageURL();
 
+    void update();
 }

@@ -1,18 +1,34 @@
 package com.example.bellng.trackall;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+
+import com.example.bellng.trackall.listitems.AusPost;
 
 
 public class AddPackageActivity extends Activity {
+
+    Spinner spinner;
+    EditText titleInput,trackingInput;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_package);
         setTitle("Add Package");
+
+        titleInput = (EditText) findViewById(R.id.titleInput);
+        trackingInput = (EditText) findViewById(R.id.trackingInput);
+
+        spinner = (Spinner) findViewById(R.id.courierSpinner);
+        spinner.setAdapter(new ArrayAdapter<PackageType>(this,android.R.layout.simple_spinner_item,PackageType.values()));
     }
 
     @Override
@@ -30,6 +46,16 @@ public class AddPackageActivity extends Activity {
         int id = item.getItemId();
         if (id == R.id.action_add_package) {
             //TODO: check if it is valid and if so, create the object and pass it back to main
+            PackageType type = (PackageType) spinner.getSelectedItem();
+            Intent i = new Intent();
+            switch(type){
+                case AusPost:
+                    AusPost itemObject = new AusPost(titleInput.getText().toString(),trackingInput.getText().toString());
+                    i.putExtra("item", itemObject);
+                    break;
+            }
+            setResult(RESULT_OK,i);
+            finish();
             return true;
         }
 

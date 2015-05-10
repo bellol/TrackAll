@@ -8,12 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.example.bellng.trackall.listitems.AusPost;
+
 import java.util.ArrayList;
 
 
 public class MainActivity extends Activity {
 
-    public static final int ADD_ITEM_REQUEST = 0;
+    public static final int ADD_PACKAGE_REQUEST = 0;
 
     private ListView itemListView;
     private ArrayList<ListItem> itemList;
@@ -48,11 +50,24 @@ public class MainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_package) {
             Intent i = new Intent(this,AddPackageActivity.class);
-            startActivityForResult(i,ADD_ITEM_REQUEST);
+            startActivityForResult(i, ADD_PACKAGE_REQUEST);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_PACKAGE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                // Grab the Monster object out of the intent
+                AusPost item = data.getParcelableExtra("item");
+                itemList.add(item);
+                // Apply new adapter and update count
+               // itemListView.setAdapter(new ItemAdapter(this, itemList));
+            }
+        }
     }
 
     private class UpdateItemsTask extends AsyncTask<String, Void, String> {

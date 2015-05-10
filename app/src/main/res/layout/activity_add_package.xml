@@ -17,7 +17,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/titleInput"
         android:layout_below="@+id/title"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
@@ -27,23 +27,23 @@
         android:layout_height="wrap_content"
         android:text="Tracking Number:"
         android:id="@+id/trackingNumber"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/titleInput"
         android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
+        android:id="@+id/trackingInput"
         android:layout_below="@+id/trackingNumber"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/editText" />
+        android:layout_alignEnd="@+id/titleInput" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Courier"
         android:id="@+id/courier"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/trackingInput"
         android:layout_alignParentStart="true" />
 
     <Spinner
@@ -52,5 +52,6 @@
         android:id="@+id/courierSpinner"
         android:layout_below="@+id/courier"
         android:layout_alignParentStart="true"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
