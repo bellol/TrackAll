@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,9 +17,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
-    public static final int ADD_PACKAGE_REQUEST = 0;
+    public static final int ADD_ITEM_REQUEST = 0;
 
-    private SwipeRefreshLayout swipeLayout;
     private ListView itemListView;
     private ItemAdapter itemAdapter;
     private ArrayList<ListItem> itemList;
@@ -53,10 +51,14 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_package) {
             Intent i = new Intent(this,AddPackageActivity.class);
-            startActivityForResult(i, ADD_PACKAGE_REQUEST);
+            startActivityForResult(i, ADD_ITEM_REQUEST);
+            return true;
+        }
+        if (id == R.id.action_add_account){
+            Intent i = new Intent(this,AddAccountActivity.class);
+            startActivityForResult(i, ADD_ITEM_REQUEST);
             return true;
         }
 
@@ -65,7 +67,7 @@ public class MainActivity extends Activity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_PACKAGE_REQUEST) {
+        if (requestCode == ADD_ITEM_REQUEST) {
             if (resultCode == RESULT_OK) {
                 ListItem item = data.getParcelableExtra("item");
                 itemList.add(item);

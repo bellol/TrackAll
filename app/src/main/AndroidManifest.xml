@@ -22,6 +22,10 @@
             android:name=".AddPackageActivity"
             android:label="@string/title_activity_add_item" >
         </activity>
+        <activity
+            android:name=".AddAccountActivity"
+            android:label="@string/title_activity_add_account" >
+        </activity>
     </application>
 
 </manifest>
