@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.bellng.trackall.listitems.AusPost;
+
 import java.util.ArrayList;
 
 
@@ -35,6 +37,19 @@ public class MainActivity extends Activity {
 
         itemAdapter = new ItemAdapter(this,itemList);
         itemListView.setAdapter(itemAdapter);
+
+        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ListItem result = (ListItem) itemListView.getAdapter().getItem(i);
+                /*
+                Intent intent = new Intent(getApplicationContext(), .class);
+                intent.putExtra("r", result);
+                intent.putExtra("index", i);
+                startActivityForResult(intent,VIEW_PACKAGE_REQUEST);
+                */
+            }
+        });
     }
 
     @Override
@@ -72,6 +87,12 @@ public class MainActivity extends Activity {
                 ListItem item = data.getParcelableExtra("item");
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
+
+                //this is just testing code. to test update() method
+                if(item instanceof AusPost){
+                    item.update();
+                    itemAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
