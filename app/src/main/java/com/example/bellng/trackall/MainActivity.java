@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.bellng.trackall.listitems.Package;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -40,6 +43,11 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ListItem result = (ListItem) itemListView.getAdapter().getItem(i);
+                if(result instanceof Package){
+                    Intent intent = new Intent(getApplicationContext(),ViewPackageActivity.class);
+                    intent.putExtra("r", (Serializable) result);
+                    startActivity(intent);
+                }
                 /*
                 Intent intent = new Intent(getApplicationContext(), .class);
                 intent.putExtra("r", result);
@@ -83,7 +91,8 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ITEM_REQUEST) {
             if (resultCode == RESULT_OK) {
-                ListItem item = data.getParcelableExtra("item");
+                //ListItem item = data.getParcelableExtra("item");
+                ListItem item = (ListItem) data.getSerializableExtra("item");
                 item.update();
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();

@@ -5,12 +5,13 @@ import android.os.Parcelable;
 
 import com.example.bellng.trackall.ListItem;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by bellng on 11/05/2015.
  */
-public class Myki implements ListItem, Parcelable {
+public class Myki implements ListItem, Serializable {
 
     private final String iconURL = "http://pbs.twimg.com/profile_images/471546658426089472/ZtAyQAmk.jpeg";
     private String title;
@@ -55,12 +56,11 @@ public class Myki implements ListItem, Parcelable {
         return iconURL;
     }
 
-    @Override
+
     public int describeContents() {
         return 0;
     }
 
-    @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
         parcel.writeString(username);

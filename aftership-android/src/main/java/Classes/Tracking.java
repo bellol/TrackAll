@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +20,7 @@ import Enums.StatusTag;
  * Define a Tracking element
  * Created by User on 11/6/14
  */
-public class Tracking {
+public class Tracking implements Serializable{
 
     /**Identifier of the tracking in the Aftership system*/
     private String id;

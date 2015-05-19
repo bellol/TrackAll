@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.example.bellng.trackall.ListItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,46 +18,18 @@ import Enums.ConnectionAPIMethods;
 /**
  * Created by bellng on 19/05/2015.
  */
-public class Package implements ListItem, Parcelable, AsyncTaskCompleteListener<ConnectionAPI> {
+public class Package implements ListItem, Serializable, AsyncTaskCompleteListener<ConnectionAPI> {
 
     public String title,trackingNumber,slugName,description;
     public Tracking tracking;
-    private List<Checkpoint> checkpoints;
+    public List<Checkpoint> checkpoints; // change back to private
     private String API_KEY = "652c08bc-f1b1-45dd-99bf-0baa6d576f91";
 
-    /*
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Package createFromParcel(Parcel in) {
-            return new Package(in);
-        }
-
-        public Package[] newArray(int size) {
-            return new Package[size];
-        }
-    };
-
-    public Package(Parcel in) {
-        this.title = in.readString();
-        this.trackingNumber = in.readString();
-        this.slugName = in.readString();
-
-        System.out.println("1");
-    }
-*/
     public Package(String title, String trackingNumber, String slugName) {
         this.title = title;
         this.trackingNumber = trackingNumber;
         this.slugName = slugName;
     }
-/*
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(title);
-        parcel.writeString(trackingNumber);
-        parcel.writeString(slugName);
-
-        System.out.println("3");
-    }
-    */
 
     private Tracking createTracking(){
         Tracking t = new Tracking(trackingNumber);
@@ -136,12 +109,10 @@ public class Package implements ListItem, Parcelable, AsyncTaskCompleteListener<
         API_KEY = in.readString();
     }
 
-    @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(trackingNumber);

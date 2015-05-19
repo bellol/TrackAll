@@ -13,15 +13,7 @@ public final class R {
     public static final class drawable {
         public static int ic_launcher=0x7f020000;
     }
-    public static final class id {
-        public static int textResult=0x7f050001;
-        public static int threeFirstNumbers=0x7f050000;
-        public static int tv_main=0x7f050002;
-    }
-    public static final class layout {
-        public static int main=0x7f030000;
-    }
     public static final class string {
-        public static int app_name=0x7f040000;
+        public static int app_name=0x7f030000;
     }
 }

@@ -3,12 +3,14 @@ package Classes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 import Enums.ISO3Country;
 
 /**
  * Created by User on 10/6/14.
  */
-public class Checkpoint {
+public class Checkpoint implements Serializable{
 
     /** Date and time of the tracking created. */
     private String createdAt;

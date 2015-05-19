@@ -1,22 +1,39 @@
 package com.example.bellng.trackall;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.bellng.trackall.listitems.Package;
+
+import Classes.Checkpoint;
+
 
 public class ViewPackageActivity extends Activity {
 
     TextView checkpointLabel;
+    Package p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_package);
 
+        Intent i = getIntent();
+        p = (Package) i.getSerializableExtra("r");
+        setTitle(p.getTitle());
         checkpointLabel = (TextView) findViewById(R.id.checkpoints);
+
+        if(p.checkpoints != null) {
+            String cplabel = "";
+            for (Checkpoint c : p.checkpoints) {
+                cplabel += (c + "\n");
+            }
+            checkpointLabel.setText(cplabel);
+        }
 
     }
 
