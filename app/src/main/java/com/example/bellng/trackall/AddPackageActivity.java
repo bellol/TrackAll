@@ -9,8 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.example.bellng.trackall.listitems.AusPost;
-import com.example.bellng.trackall.listitems.USPS;
+import com.example.bellng.trackall.listitems.Package;
 
 
 public class AddPackageActivity extends Activity {
@@ -51,6 +50,7 @@ public class AddPackageActivity extends Activity {
             //TODO: check if it is valid and if so, create the object and pass it back to main
             PackageType type = (PackageType) spinner.getSelectedItem();
             Intent i = new Intent();
+            /*
             switch(type){
                 case AusPost:
                     AusPost itemObject = new AusPost(titleInput.getText().toString(),trackingInput.getText().toString());
@@ -61,7 +61,10 @@ public class AddPackageActivity extends Activity {
                     i.putExtra("item", usps);
                     break;
             }
-            setResult(RESULT_OK,i);
+            */
+            Package p = new Package(titleInput.getText().toString(), trackingInput.getText().toString(),type.getSlugName());
+            i.putExtra("item",p);
+            setResult(RESULT_OK, i);
             finish();
             return true;
         }

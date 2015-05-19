@@ -12,8 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.bellng.trackall.listitems.AusPost;
-
 import java.util.ArrayList;
 
 
@@ -56,6 +54,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        itemAdapter.notifyDataSetChanged();
         return true;
     }
 
@@ -85,14 +84,9 @@ public class MainActivity extends Activity {
         if (requestCode == ADD_ITEM_REQUEST) {
             if (resultCode == RESULT_OK) {
                 ListItem item = data.getParcelableExtra("item");
+                item.update();
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
-
-                //this is just testing code. to test update() method
-                if(item instanceof AusPost){
-                    item.update();
-                    itemAdapter.notifyDataSetChanged();
-                }
             }
         }
     }
