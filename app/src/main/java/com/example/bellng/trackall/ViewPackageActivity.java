@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.bellng.trackall.listitems.Package;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import Classes.Checkpoint;
 
@@ -16,6 +20,7 @@ public class ViewPackageActivity extends Activity {
 
     TextView checkpointLabel;
     Package p;
+    int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +28,18 @@ public class ViewPackageActivity extends Activity {
         setContentView(R.layout.activity_view_package);
 
         Intent i = getIntent();
+        index = i.getIntExtra("index",0);
         p = (Package) i.getSerializableExtra("r");
         setTitle(p.getTitle());
-        checkpointLabel = (TextView) findViewById(R.id.checkpoints);
 
-        if(p.checkpoints != null) {
-            String cplabel = "";
-            for (Checkpoint c : p.checkpoints) {
-                cplabel += (c + "\n");
-            }
-            checkpointLabel.setText(cplabel);
-        }
+        ListView checkpointList = (ListView) findViewById(R.id.checkpointList);
+        ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>(p.checkpoints);
+
+        Collections.reverse(checkpoints);
+
+        CheckpointAdapter adapter = new CheckpointAdapter(this, checkpoints);
+
+        checkpointList.setAdapter(adapter);
 
     }
 
@@ -52,10 +58,22 @@ public class ViewPackageActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit) {
+            return true;
+        }
+        if (id == R.id.action_delete){
+            Intent i = new Intent();
+            i.putExtra("action","delete");
+            i.putExtra("index",index);
+            setResult(RESULT_OK, i);
+            finish();
+            return true;
+        }
+        if (id == R.id.action_refresh){
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

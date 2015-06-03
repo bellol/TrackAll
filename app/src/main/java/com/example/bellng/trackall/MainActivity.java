@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     public static final int ADD_ITEM_REQUEST = 0;
+    public static final int VIEW_PACKAGE_REQUEST = 1;
 
     private ListView itemListView;
     private ItemAdapter itemAdapter;
@@ -39,14 +40,10 @@ public class MainActivity extends Activity {
         itemListView = (ListView) findViewById(R.id.itemListView);
         registerForContextMenu(itemListView);
 
-       // itemList = new ArrayList<ListItem>(); //TODO: this should be finding the list from the database instead of initializing a new list every time
-
         dbHelper = new DatabaseHelper(getApplicationContext());
         itemList = new ArrayList<ListItem>(dbHelper.getAllPackages().values());
 
-        for(ListItem li : itemList){
-            li.update();
-        }
+        for(ListItem li : itemList) li.update();
 
         itemAdapter = new ItemAdapter(this,itemList);
         itemListView.setAdapter(itemAdapter);
@@ -59,7 +56,9 @@ public class MainActivity extends Activity {
                 if (result instanceof Package) {
                     Intent intent = new Intent(getApplicationContext(), ViewPackageActivity.class);
                     intent.putExtra("r", (Serializable) result);
-                    startActivity(intent);
+                    intent.putExtra("index", i);
+                    //startActivity(intent);
+                    startActivityForResult(intent, VIEW_PACKAGE_REQUEST);
                 }
                 /*
                 Intent intent = new Intent(getApplicationContext(), .class);
@@ -103,12 +102,26 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ITEM_REQUEST) {
             if (resultCode == RESULT_OK) {
-                //ListItem item = data.getParcelableExtra("item");
                 ListItem item = (ListItem) data.getSerializableExtra("item");
                 item.addToDatabase(dbHelper);
                 item.update();
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
+            }
+        }
+
+        if (resultCode == VIEW_PACKAGE_REQUEST) {
+            if(resultCode == RESULT_OK){
+                String action = data.getStringExtra("action");
+                System.out.println(action);
+                if(action.equals("delete")) {
+                    ListItem item = (ListItem) data.getSerializableExtra("item");
+                    int index = data.getIntExtra("index",0);
+                    System.out.println(index);
+                    itemList.get(index).deleteFromDatabase(dbHelper);
+                    itemList.remove(index);
+                    itemAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
@@ -172,7 +185,14 @@ public class MainActivity extends Activity {
         itemAdapter.notifyDataSetChanged();
     }
 
-
+    public void removeListItem(ListItem item){
+        for(ListItem li : itemList){
+            if(item.equals(li)){
+                li.deleteFromDatabase(dbHelper);
+                break;
+            }
+        }
+    }
 
     private class UpdateItemsTask extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... urls){

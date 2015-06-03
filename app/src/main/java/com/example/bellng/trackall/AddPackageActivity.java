@@ -50,18 +50,7 @@ public class AddPackageActivity extends Activity {
             //TODO: check if it is valid and if so, create the object and pass it back to main
             PackageType type = (PackageType) spinner.getSelectedItem();
             Intent i = new Intent();
-            /*
-            switch(type){
-                case AusPost:
-                    AusPost itemObject = new AusPost(titleInput.getText().toString(),trackingInput.getText().toString());
-                    i.putExtra("item", itemObject);
-                    break;
-                case USPS:
-                    USPS usps = new USPS(titleInput.getText().toString(),trackingInput.getText().toString());
-                    i.putExtra("item", usps);
-                    break;
-            }
-            */
+
             Package p = new Package(titleInput.getText().toString(), trackingInput.getText().toString(),type.getSlugName());
             i.putExtra("item",p);
             setResult(RESULT_OK, i);
