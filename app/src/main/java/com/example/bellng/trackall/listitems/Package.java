@@ -3,6 +3,7 @@ package com.example.bellng.trackall.listitems;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.bellng.trackall.DatabaseHelper;
 import com.example.bellng.trackall.ListItem;
 
 import java.io.Serializable;
@@ -20,10 +21,42 @@ import Enums.ConnectionAPIMethods;
  */
 public class Package implements ListItem, Serializable, AsyncTaskCompleteListener<ConnectionAPI> {
 
+    // Database constants
+    public static final String TABLE_NAME = "packages";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_TRACKING_NUMBER = "tracking_number";
+    public static final String COLUMN_SLUG_NAME = "slug_name";
+
+    public static final String CREATE_STATEMENT =
+            "CREATE TABLE " + TABLE_NAME + "(" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    COLUMN_TITLE + " TEXT NOT NULL, " +
+                    COLUMN_TRACKING_NUMBER + " TEXT NOT NULL, " +
+                    COLUMN_SLUG_NAME + " TEXT NOT NULL" +
+                    ")";
+
+    private long id;
     public String title,trackingNumber,slugName,description;
     public Tracking tracking;
     public List<Checkpoint> checkpoints; // change back to private
     private String API_KEY = "652c08bc-f1b1-45dd-99bf-0baa6d576f91";
+
+    // Default constructor with required params
+    public Package(long id, String title, String trackingNumber, String slugName) {
+        this.id = id;
+        this.title = title;
+        this.trackingNumber = trackingNumber;
+        this.slugName = slugName;
+    }
+
+    public long getId(){
+        return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
 
     public Package(String title, String trackingNumber, String slugName) {
         this.title = title;
@@ -46,6 +79,14 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
     @Override
     public String getDescription() {
         return checkpoints != null ? "Status: " + checkpoints.get(checkpoints.size() - 1).getTag() + "\n" + checkpoints.get(checkpoints.size() - 1).getMessage() : "Awaiting Refresh";
+    }
+
+    public String getTrackingNumber(){
+        return trackingNumber;
+    }
+
+    public String getSlugName(){
+        return slugName;
     }
 
     @Override
@@ -71,6 +112,19 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         }
 
         new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this,t).execute();
+    }
+
+    public void addToDatabase(DatabaseHelper dbHelper){
+        dbHelper.addPackage(this);
+    }
+
+    public void deleteFromDatabase(DatabaseHelper dbHelper){
+        dbHelper.removePackage(this);
+    }
+
+    public void editName(DatabaseHelper dbHelper, String name){
+        this.title = name;
+        dbHelper.editPackageName(this, name);
     }
 
     @Override

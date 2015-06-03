@@ -3,6 +3,7 @@ package com.example.bellng.trackall.listitems;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.bellng.trackall.DatabaseHelper;
 import com.example.bellng.trackall.ListItem;
 
 import java.io.Serializable;
@@ -42,6 +43,18 @@ public class Myki implements ListItem, Serializable {
 
     public void update(){
         //TODO: set up selenium/selendroid
+    }
+
+    public void addToDatabase(DatabaseHelper dbHelper){
+        //TODO:
+    }
+
+    public void deleteFromDatabase(DatabaseHelper dbHelper){
+        //TODO:
+    }
+
+    public void editName(DatabaseHelper dbHelper, String name){
+        //TODO:
     }
 
     public String getTitle(){

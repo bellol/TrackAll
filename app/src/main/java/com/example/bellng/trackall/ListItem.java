@@ -12,4 +12,10 @@ public interface ListItem {
     String getImageURL();
 
     void update();
+
+    void addToDatabase(DatabaseHelper dbHelper);
+
+    void deleteFromDatabase(DatabaseHelper dbHelper);
+
+    void editName(DatabaseHelper dbHelper, String name);
 }

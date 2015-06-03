@@ -1,15 +1,19 @@
 package com.example.bellng.trackall;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.bellng.trackall.listitems.Package;
@@ -25,6 +29,7 @@ public class MainActivity extends Activity {
     private ListView itemListView;
     private ItemAdapter itemAdapter;
     private ArrayList<ListItem> itemList;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,14 @@ public class MainActivity extends Activity {
         itemListView = (ListView) findViewById(R.id.itemListView);
         registerForContextMenu(itemListView);
 
-        itemList = new ArrayList<ListItem>(); //TODO: this should be finding the list from the database instead of initializing a new list every time
+       // itemList = new ArrayList<ListItem>(); //TODO: this should be finding the list from the database instead of initializing a new list every time
+
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        itemList = new ArrayList<ListItem>(dbHelper.getAllPackages().values());
+
+        for(ListItem li : itemList){
+            li.update();
+        }
 
         itemAdapter = new ItemAdapter(this,itemList);
         itemListView.setAdapter(itemAdapter);
@@ -43,8 +55,9 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ListItem result = (ListItem) itemListView.getAdapter().getItem(i);
-                if(result instanceof Package){
-                    Intent intent = new Intent(getApplicationContext(),ViewPackageActivity.class);
+
+                if (result instanceof Package) {
+                    Intent intent = new Intent(getApplicationContext(), ViewPackageActivity.class);
                     intent.putExtra("r", (Serializable) result);
                     startActivity(intent);
                 }
@@ -62,7 +75,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        itemAdapter.notifyDataSetChanged();
         return true;
     }
 
@@ -93,6 +105,7 @@ public class MainActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 //ListItem item = data.getParcelableExtra("item");
                 ListItem item = (ListItem) data.getSerializableExtra("item");
+                item.addToDatabase(dbHelper);
                 item.update();
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
@@ -109,12 +122,42 @@ public class MainActivity extends Activity {
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.action_edit:
                 //TODO: allow for input to change title of item (itemList.get(info.position))
+
+                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setView(promptView);
+
+                final EditText editText = (EditText) promptView.findViewById(R.id.editText);
+                // setup a dialog window
+                alertDialogBuilder.setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ListItem li = itemList.get(info.position);
+                                li.editName(dbHelper,editText.getText().toString());
+                                itemList.remove(info.position);
+                                itemList.add(li);
+                                itemAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create an alert dialog
+                AlertDialog alert = alertDialogBuilder.create();
+                alert.show();
+
                 return true;
             case R.id.action_delete:
+                itemList.get(info.position).deleteFromDatabase(dbHelper);
                 itemList.remove(info.position);
                 itemAdapter.notifyDataSetChanged();
                 return true;
@@ -122,6 +165,13 @@ public class MainActivity extends Activity {
                 return super.onContextItemSelected(item);
         }
     }
+
+    public void refreshList(View v){
+        for(ListItem i : itemList) i.update();
+
+        itemAdapter.notifyDataSetChanged();
+    }
+
 
 
     private class UpdateItemsTask extends AsyncTask<String, Void, String> {
