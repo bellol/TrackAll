@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.bellng.trackall.listitems.Package;
 
@@ -18,9 +17,7 @@ import Classes.Checkpoint;
 
 public class ViewPackageActivity extends Activity {
 
-    TextView checkpointLabel;
     Package p;
-    int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +25,20 @@ public class ViewPackageActivity extends Activity {
         setContentView(R.layout.activity_view_package);
 
         Intent i = getIntent();
-        index = i.getIntExtra("index",0);
         p = (Package) i.getSerializableExtra("r");
         setTitle(p.getTitle());
 
         ListView checkpointList = (ListView) findViewById(R.id.checkpointList);
-        ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>(p.checkpoints);
 
-        Collections.reverse(checkpoints);
+        if(p.checkpoints != null) {
+            ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>(p.checkpoints);
 
-        CheckpointAdapter adapter = new CheckpointAdapter(this, checkpoints);
+            Collections.reverse(checkpoints);
 
-        checkpointList.setAdapter(adapter);
+            CheckpointAdapter adapter = new CheckpointAdapter(this, checkpoints);
+
+            checkpointList.setAdapter(adapter);
+        }
 
     }
 
@@ -56,20 +55,19 @@ public class ViewPackageActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit) {
             return true;
         }
         if (id == R.id.action_delete){
-            Intent i = new Intent();
-            i.putExtra("action","delete");
-            i.putExtra("index",index);
-            setResult(RESULT_OK, i);
+            Intent intent = new Intent();
+            intent.putExtra("action","delete");
+            intent.putExtra("item",p);
+            setResult(RESULT_OK, intent);
             finish();
             return true;
         }
         if (id == R.id.action_refresh){
+            p.update();
             return true;
         }
 
