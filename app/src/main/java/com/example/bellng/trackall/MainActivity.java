@@ -110,16 +110,19 @@ public class MainActivity extends Activity {
             }
         }
 
-        if (resultCode == VIEW_PACKAGE_REQUEST) {
+        if (requestCode == VIEW_PACKAGE_REQUEST) {
             if(resultCode == RESULT_OK){
                 String action = data.getStringExtra("action");
-                System.out.println(action);
                 if(action.equals("delete")) {
-                    ListItem item = (ListItem) data.getSerializableExtra("item");
                     int index = data.getIntExtra("index",0);
-                    System.out.println(index);
                     itemList.get(index).deleteFromDatabase(dbHelper);
                     itemList.remove(index);
+                    itemAdapter.notifyDataSetChanged();
+                }
+                if(action.equals("edit")){
+                    ListItem item = (ListItem) data.getSerializableExtra("item");
+                    int index = data.getIntExtra("index",0);
+                    itemList.get(index).editName(dbHelper,item.getTitle());
                     itemAdapter.notifyDataSetChanged();
                 }
             }
@@ -138,8 +141,6 @@ public class MainActivity extends Activity {
         final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.action_edit:
-                //TODO: allow for input to change title of item (itemList.get(info.position))
-
                 LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
                 View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
