@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.example.bellng.trackall.listitems.Package;
 
 import java.io.Serializable;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
     private ListView itemListView;
     private ItemAdapter itemAdapter;
     private ArrayList<ListItem> itemList;
+    private PullRefreshLayout pullRefresh;
     private DatabaseHelper dbHelper;
 
     @Override
@@ -68,6 +70,20 @@ public class MainActivity extends Activity {
                 */
             }
         });
+
+        pullRefresh = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        pullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                for(ListItem i : itemList) i.update();
+
+                itemAdapter.notifyDataSetChanged();
+                pullRefresh.setRefreshing(false);
+            }
+        });
+
+        itemAdapter.notifyDataSetChanged();
     }
 
     @Override
