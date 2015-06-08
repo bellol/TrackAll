@@ -1,17 +1,23 @@
-package com.example.bellng.trackall;
+package com.example.bellng.trackall.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.bellng.trackall.R;
 import com.example.bellng.trackall.listitems.Package;
 
 import java.util.ArrayList;
@@ -112,4 +118,52 @@ public class ViewPackageActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    class CheckpointAdapter extends BaseAdapter {
+
+        Context context;
+        ArrayList<Checkpoint> checkpoints;
+
+        public CheckpointAdapter(Context context, ArrayList<Checkpoint> checkpoints){
+            this.context = context;
+            this.checkpoints = checkpoints;
+        }
+
+        public int getCount(){
+            return checkpoints.size();
+        }
+
+        @Override
+        public Checkpoint getItem(int i) {
+            return checkpoints.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(view == null){
+                LayoutInflater inflater = (LayoutInflater)
+                        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.list_checkpoint, null);
+            }
+
+            TextView time = (TextView) view.findViewById(R.id.timeLabel);
+            TextView message = (TextView) view.findViewById(R.id.messageLabel);
+            TextView location = (TextView) view.findViewById(R.id.locationLabel);
+
+            Checkpoint item = checkpoints.get(i);
+
+            message.setTypeface(null, Typeface.BOLD);
+
+            time.setText(item.getCheckpointTime());
+            message.setText(item.getMessage());
+            location.setText(item.getCountryName());
+
+            return view;
+        }
+
+    }
 }

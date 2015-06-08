@@ -1,4 +1,4 @@
-package com.example.bellng.trackall;
+package com.example.bellng.trackall.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.bellng.trackall.R;
+import com.example.bellng.trackall.enums.PackageType;
 import com.example.bellng.trackall.listitems.Package;
 
 

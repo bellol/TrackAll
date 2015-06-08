@@ -1,4 +1,6 @@
-package com.example.bellng.trackall;
+package com.example.bellng.trackall.listitems;
+
+import com.example.bellng.trackall.DatabaseHelper;
 
 /**
  * Created by bellng on 10/05/2015.
@@ -18,4 +20,6 @@ public interface ListItem {
     void deleteFromDatabase(DatabaseHelper dbHelper);
 
     void editName(DatabaseHelper dbHelper, String name);
+
+    boolean isUpdating();
 }

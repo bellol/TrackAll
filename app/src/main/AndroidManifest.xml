@@ -21,16 +21,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddPackageActivity"
+            android:name=".activities.AddPackageActivity"
             android:label="@string/title_activity_add_item" >
         </activity>
         <activity
-            android:name=".AddAccountActivity"
-            android:label="@string/title_activity_add_account" >
+            android:name=".activities.ViewPackageActivity"
+            android:label="@string/title_activity_view_package" >
         </activity>
         <activity
-            android:name=".ViewPackageActivity"
-            android:label="@string/title_activity_view_package" >
+            android:name=".activities.AddOtherActivity"
+            android:label="@string/title_activity_add_other" >
+        </activity>
+        <activity
+            android:name=".activities.AddXEActivity"
+            android:label="@string/title_activity_add_xe" >
         </activity>
     </application>
 

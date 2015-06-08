@@ -1,4 +1,4 @@
-package com.example.bellng.trackall;
+package com.example.bellng.trackall.enums;
 
 /**
  * Created by bellng on 10/05/2015.

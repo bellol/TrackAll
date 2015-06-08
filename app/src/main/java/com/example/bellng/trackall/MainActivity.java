@@ -2,22 +2,33 @@ package com.example.bellng.trackall;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.example.bellng.trackall.activities.AddOtherActivity;
+import com.example.bellng.trackall.activities.AddPackageActivity;
+import com.example.bellng.trackall.activities.ViewPackageActivity;
+import com.example.bellng.trackall.listitems.ListItem;
 import com.example.bellng.trackall.listitems.Package;
+import com.example.bellng.trackall.listitems.XE;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,17 +44,21 @@ public class MainActivity extends Activity {
     private ArrayList<ListItem> itemList;
     private PullRefreshLayout pullRefresh;
     private DatabaseHelper dbHelper;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        handler = new Handler();
+
         itemListView = (ListView) findViewById(R.id.itemListView);
         registerForContextMenu(itemListView);
 
         dbHelper = new DatabaseHelper(getApplicationContext());
         itemList = new ArrayList<ListItem>(dbHelper.getAllPackages().values());
+        itemList.add(new XE(1,"AUD","USD"));
 
         for(ListItem li : itemList) li.update();
 
@@ -59,15 +74,9 @@ public class MainActivity extends Activity {
                     Intent intent = new Intent(getApplicationContext(), ViewPackageActivity.class);
                     intent.putExtra("r", (Serializable) result);
                     intent.putExtra("index", i);
-                    //startActivity(intent);
                     startActivityForResult(intent, VIEW_PACKAGE_REQUEST);
                 }
-                /*
-                Intent intent = new Intent(getApplicationContext(), .class);
-                intent.putExtra("r", result);
-                intent.putExtra("index", i);
-                startActivityForResult(intent,VIEW_PACKAGE_REQUEST);
-                */
+
             }
         });
 
@@ -77,19 +86,24 @@ public class MainActivity extends Activity {
             @Override
             public void onRefresh() {
                 for(ListItem i : itemList) i.update();
-
-                itemAdapter.notifyDataSetChanged();
-                pullRefresh.setRefreshing(false);
+                handler.postDelayed(updateListView, 2000);
             }
         });
 
-        itemAdapter.notifyDataSetChanged();
+        handler.postDelayed(updateListView, 5000);
     }
+    private Runnable updateListView = new Runnable() {
+        public void run() {
+            itemAdapter.notifyDataSetChanged();
+            pullRefresh.setRefreshing(false);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -105,8 +119,8 @@ public class MainActivity extends Activity {
             startActivityForResult(i, ADD_ITEM_REQUEST);
             return true;
         }
-        if (id == R.id.action_add_account){
-            Intent i = new Intent(this,AddAccountActivity.class);
+        if (id == R.id.action_add_other){
+            Intent i = new Intent(this,AddOtherActivity.class);
             startActivityForResult(i, ADD_ITEM_REQUEST);
             return true;
         }
@@ -123,6 +137,7 @@ public class MainActivity extends Activity {
                 item.update();
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
+                handler.postDelayed(updateListView, 2000);
             }
         }
 
@@ -143,6 +158,7 @@ public class MainActivity extends Activity {
                 }
             }
         }
+
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -211,11 +227,50 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class UpdateItemsTask extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... urls){
-            return null;
+    class ItemAdapter extends BaseAdapter {
+
+        Context context;
+        ArrayList<ListItem> items;
+
+        public ItemAdapter(Context context, ArrayList<ListItem> items){
+            this.context = context;
+            this.items = items;
+        }
+
+        public int getCount(){
+            return items.size();
+        }
+
+        public ListItem getItem(int i){
+            return items.get(i);
+        }
+
+        public long getItemId(int i){
+            return i;
+        }
+
+        public View getView(int i, View view, ViewGroup viewGroup){
+            if(view == null){
+                LayoutInflater inflater = (LayoutInflater)
+                        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.list_item, null);
+            }
+
+            TextView title = (TextView) view.findViewById(R.id.titleLabel);
+            TextView description = (TextView) view.findViewById(R.id.descLabel);
+            ImageView image = (ImageView) view.findViewById(R.id.imageView);
+
+            ListItem item = items.get(i);
+
+            title.setText(item.getTitle());
+            description.setText(item.getDescription());
+            Picasso.with(context).load(item.getImageURL()).into(image);
+
+            return view;
         }
     }
 
-
+    protected void onPostExecute(Void result) {
+        System.out.println("*****************************************************");
+    }
 }

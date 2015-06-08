@@ -1,7 +1,6 @@
 package com.example.bellng.trackall.listitems;
 
 import com.example.bellng.trackall.DatabaseHelper;
-import com.example.bellng.trackall.ListItem;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,6 +36,7 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
     public Tracking tracking;
     public List<Checkpoint> checkpoints; // change back to private
     private String API_KEY = "652c08bc-f1b1-45dd-99bf-0baa6d576f91";
+    private boolean updating;
 
     // Default constructor with required params
     public Package(long id, String title, String trackingNumber, String slugName) {
@@ -44,6 +44,7 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         this.title = title;
         this.trackingNumber = trackingNumber;
         this.slugName = slugName;
+        updating = false;
     }
 
     public long getId(){
@@ -58,6 +59,7 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         this.title = title;
         this.trackingNumber = trackingNumber;
         this.slugName = slugName;
+        updating = false;
     }
 
     private Tracking createTracking(){
@@ -113,11 +115,14 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
 
     @Override
     public void update() {
-        Tracking t = tracking;
+        if(!updating) {
+            updating = true;
+            Tracking t = tracking;
 
-        if(t == null) t = createTracking();
+            if (t == null) t = createTracking();
 
-        new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this,t).execute();
+            new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this, t).execute();
+        }
     }
 
     public void addToDatabase(DatabaseHelper dbHelper){
@@ -133,8 +138,14 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         dbHelper.editPackageName(this, name);
     }
 
+    public boolean isUpdating(){
+        return updating;
+    }
+
     @Override
     public void onTaskComplete(ConnectionAPI result) {
+        updating = false;
+
         if (result.getException()!=null) {
             System.out.println(result.getException().getMessage());//do something with the exception
             return;

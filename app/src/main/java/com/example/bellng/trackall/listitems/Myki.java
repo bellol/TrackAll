@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.bellng.trackall.DatabaseHelper;
-import com.example.bellng.trackall.ListItem;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -19,12 +18,14 @@ public class Myki implements ListItem, Serializable {
     private String username,password;
     private HashMap<String,String> cards;
     private String defaultCard;
+    boolean updating;
 
     public Myki(String title,String username, String password){
         this.title = title;
         this.username = username;
         this.password = password;
         this.cards = new HashMap<String,String>();
+        updating = false;
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         public Myki createFromParcel(Parcel in){
@@ -39,6 +40,10 @@ public class Myki implements ListItem, Serializable {
         this.title = in.readString();
         this.username = in.readString();
         this.password = in.readString();
+    }
+
+    public boolean isUpdating(){
+        return updating;
     }
 
     public void update(){
