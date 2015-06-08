@@ -94,10 +94,21 @@ public class MainActivity extends Activity {
     }
     private Runnable updateListView = new Runnable() {
         public void run() {
-            itemAdapter.notifyDataSetChanged();
-            pullRefresh.setRefreshing(false);
+            if(stillRefreshing()){
+                handler.postDelayed(updateListView,500);
+            }else {
+                itemAdapter.notifyDataSetChanged();
+                pullRefresh.setRefreshing(false);
+            }
         }
     };
+
+    public boolean stillRefreshing(){
+        for(ListItem i : itemList){
+            if(i.isUpdating()) return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
