@@ -118,9 +118,7 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         if(!updating) {
             updating = true;
             Tracking t = tracking;
-
             if (t == null) t = createTracking();
-
             new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this, t).execute();
         }
     }

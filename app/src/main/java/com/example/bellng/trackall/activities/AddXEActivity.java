@@ -54,7 +54,7 @@ public class AddXEActivity extends Activity {
         if (id == R.id.action_add) {
             //TODO: validate inputs first
             String amountString = amountInput.getText().toString();
-            XE xe = new XE(Integer.parseInt(amountString),fromSpinner.getSelectedItem().toString(),toSpinner.getSelectedItem().toString());
+            XE xe = new XE("Currency Conversion",Integer.parseInt(amountString),fromSpinner.getSelectedItem().toString(),toSpinner.getSelectedItem().toString());
             Intent intent = new Intent();
             intent.putExtra("item",xe);
             setResult(RESULT_OK, intent);

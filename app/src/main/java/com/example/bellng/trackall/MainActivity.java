@@ -27,7 +27,6 @@ import com.example.bellng.trackall.activities.AddPackageActivity;
 import com.example.bellng.trackall.activities.ViewPackageActivity;
 import com.example.bellng.trackall.listitems.ListItem;
 import com.example.bellng.trackall.listitems.Package;
-import com.example.bellng.trackall.listitems.XE;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -57,8 +56,7 @@ public class MainActivity extends Activity {
         registerForContextMenu(itemListView);
 
         dbHelper = new DatabaseHelper(getApplicationContext());
-        itemList = new ArrayList<ListItem>(dbHelper.getAllPackages().values());
-        itemList.add(new XE(1,"AUD","USD"));
+        itemList = dbHelper.getAllItems();
 
         for(ListItem li : itemList) li.update();
 
@@ -86,11 +84,11 @@ public class MainActivity extends Activity {
             @Override
             public void onRefresh() {
                 for(ListItem i : itemList) i.update();
-                handler.postDelayed(updateListView, 2000);
+                handler.postDelayed(updateListView, 1000);
             }
         });
 
-        handler.postDelayed(updateListView, 5000);
+        handler.postDelayed(updateListView, 2000);
     }
     private Runnable updateListView = new Runnable() {
         public void run() {

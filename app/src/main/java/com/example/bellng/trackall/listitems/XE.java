@@ -14,18 +14,51 @@ import java.io.Serializable;
  */
 public class XE implements ListItem,Serializable {
 
-    String title;
+    // Database constants
+    public static final String TABLE_NAME = "xe";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_AMOUNT = "amount";
+    public static final String COLUMN_FROM = "from_currency";
+    public static final String COLUMN_TO = "to_currency";
 
+    public static final String CREATE_STATEMENT =
+            "CREATE TABLE " + TABLE_NAME + "(" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    COLUMN_TITLE + " TEXT NOT NULL, " +
+                    COLUMN_AMOUNT + " INTEGER NOT NULL, " +
+                    COLUMN_FROM + " TEXT NOT NULL, " +
+                    COLUMN_TO + " TEXT NOT NULL" +
+                    ")";
+
+    private long id;
+    String title;
     int amount;
     String from,to,converted;
 
     boolean updating;
 
-    public XE(int amount, String from, String to){
+    public XE(long id, String title, int amount, String from, String to){
+        this.id = id;
+        this.title = title;
         this.amount = amount;
         this.from = from;
         this.to = to;
-        title = "Currency Conversion";
+        updating = false;
+    }
+
+    public long getId(){
+        return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
+    public XE(String title, int amount, String from, String to){
+        this.title = title;
+        this.amount = amount;
+        this.from = from;
+        this.to = to;
         updating = false;
     }
 
@@ -55,19 +88,31 @@ public class XE implements ListItem,Serializable {
 
     @Override
     public void addToDatabase(DatabaseHelper dbHelper) {
-
+        dbHelper.addXE(this);
     }
 
     @Override
     public void deleteFromDatabase(DatabaseHelper dbHelper) {
-
+        dbHelper.removeXE(this);
     }
 
     @Override
     public void editName(DatabaseHelper dbHelper, String name) {
-
+        this.title = name;
+        dbHelper.editXEName(this,name);
     }
 
+    public int getAmount(){
+        return amount;
+    }
+
+    public String getFrom(){
+        return from;
+    }
+
+    public String getTo(){
+        return to;
+    }
     public boolean isUpdating(){
         return updating;
     }
