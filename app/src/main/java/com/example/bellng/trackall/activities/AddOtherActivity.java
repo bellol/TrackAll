@@ -58,6 +58,11 @@ public class AddOtherActivity extends Activity {
                     Intent intent = new Intent(getApplicationContext(), AddXEActivity.class);
                     startActivityForResult(intent, ADD_REQUEST);
                 }
+
+                if (result == OtherItem.ASX){
+                    Intent intent = new Intent(getApplicationContext(), AddASXActivity.class);
+                    startActivityForResult(intent, ADD_REQUEST);
+                }
             }
         });
 

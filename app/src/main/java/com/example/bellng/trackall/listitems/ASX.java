@@ -10,40 +10,44 @@ import org.jsoup.nodes.Document;
 import java.io.Serializable;
 
 /**
- * Created by bellng on 8/06/2015.
+ * Created by Bell on 10/06/15.
  */
-public class XE implements ListItem,Serializable {
+public class ASX implements ListItem, Serializable {
 
     // Database constants
-    public static final String TABLE_NAME = "xe";
+    public static final String TABLE_NAME = "asx";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title";
-    public static final String COLUMN_AMOUNT = "amount";
-    public static final String COLUMN_FROM = "from_currency";
-    public static final String COLUMN_TO = "to_currency";
+    public static final String COLUMN_TICKER = "ticker";
+    public static final String COLUMN_COMPANY = "company";
 
     public static final String CREATE_STATEMENT =
             "CREATE TABLE " + TABLE_NAME + "(" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     COLUMN_TITLE + " TEXT NOT NULL, " +
-                    COLUMN_AMOUNT + " INTEGER NOT NULL, " +
-                    COLUMN_FROM + " TEXT NOT NULL, " +
-                    COLUMN_TO + " TEXT NOT NULL" +
+                    COLUMN_TICKER + " TEXT NOT NULL, " +
+                    COLUMN_COMPANY + " TEXT NOT NULL" +
                     ")";
 
     private long id;
-    String title;
-    int amount;
-    String from,to,converted;
 
+    String title;
+    String ticker,companyName;
+    String price;
     boolean updating;
 
-    public XE(long id, String title, int amount, String from, String to){
+    public ASX(String title, String ticker, String companyName){
+        this.title = title;
+        this.ticker = ticker;
+        this.companyName = companyName;
+        updating = false;
+    }
+
+    public ASX(long id, String title, String ticker, String companyName){
         this.id = id;
         this.title = title;
-        this.amount = amount;
-        this.from = from;
-        this.to = to;
+        this.ticker = ticker;
+        this.companyName = companyName;
         updating = false;
     }
 
@@ -54,14 +58,14 @@ public class XE implements ListItem,Serializable {
     public void setId(long id){
         this.id = id;
     }
-    public XE(String title, int amount, String from, String to){
-        this.title = title;
-        this.amount = amount;
-        this.from = from;
-        this.to = to;
-        updating = false;
+
+    public String getTicker(){
+        return ticker;
     }
 
+    public String getCompanyName(){
+        return companyName;
+    }
     @Override
     public String getTitle() {
         return title;
@@ -69,55 +73,44 @@ public class XE implements ListItem,Serializable {
 
     @Override
     public String getDescription() {
-        return converted != null ? amount + " " + from + " = " + converted + " " + to : "Awaiting Refresh";
+        return price != null ? "Current price: $" + price : "Awaiting Refresh";
     }
 
     @Override
     public String getImageURL() {
-        return "file:///android_asset/xe.png";
+        return "file:///android_asset/asx.jpg";
     }
 
     @Override
     public void update() {
         if(!updating) {
-            String url = "http://www.xe.com/currencyconverter/convert/?Amount=" + amount + "&From=" + from + "&To=" + to;
             updating = true;
-            new RetrieveConversionTask().execute(url);
+            new RetrievePriceTask().execute("http://www.google.com/finance?q=ASX:" + ticker);
         }
     }
 
     @Override
     public void addToDatabase(DatabaseHelper dbHelper) {
-        dbHelper.addXE(this);
+        dbHelper.addASX(this);
     }
 
     @Override
     public void deleteFromDatabase(DatabaseHelper dbHelper) {
-        dbHelper.removeXE(this);
+        dbHelper.removeASX(this);
     }
 
     @Override
     public void editName(DatabaseHelper dbHelper, String name) {
         this.title = name;
-        dbHelper.editXEName(this,name);
+        dbHelper.editASXName(this,name);
     }
 
-    public int getAmount(){
-        return amount;
-    }
-
-    public String getFrom(){
-        return from;
-    }
-
-    public String getTo(){
-        return to;
-    }
-    public boolean isUpdating(){
+    @Override
+    public boolean isUpdating() {
         return updating;
     }
 
-    class RetrieveConversionTask extends AsyncTask<String, Void, String> {
+    class RetrievePriceTask extends AsyncTask<String, Void, String> {
 
         private Exception exception;
 
@@ -125,8 +118,7 @@ public class XE implements ListItem,Serializable {
             try {
                 String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30";
                 Document doc = Jsoup.connect(urls[0]).userAgent(ua).get();
-                converted = doc.select("td[class=rightCol]").first().ownText();
-                if(converted != null || !converted.equals("")) converted = converted.substring(0, converted.length() - 1);
+                price = doc.select("span[class=pr]").first().children().first().ownText();
                 return null;
             } catch (Exception e) {
                 this.exception = e;

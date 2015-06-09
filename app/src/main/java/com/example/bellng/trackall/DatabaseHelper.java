@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.bellng.trackall.listitems.ASX;
 import com.example.bellng.trackall.listitems.ListItem;
 import com.example.bellng.trackall.listitems.Package;
 import com.example.bellng.trackall.listitems.XE;
@@ -29,12 +30,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Package.CREATE_STATEMENT);
         db.execSQL(XE.CREATE_STATEMENT);
+        db.execSQL(ASX.CREATE_STATEMENT);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + Package.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + XE.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ASX.TABLE_NAME);
         onCreate(db);
+    }
+    public void addASX(ASX asx){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ASX.COLUMN_TITLE, asx.getTitle());
+        values.put(ASX.COLUMN_TICKER, asx.getTicker());
+        values.put(ASX.COLUMN_COMPANY, asx.getCompanyName());
+
+        db.insert(ASX.TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public void removeASX(ASX asx){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(ASX.TABLE_NAME, ASX.COLUMN_ID + " = ?", new String[]{String.valueOf(asx.getId())});
+
+        db.close();
+    }
+
+    public void editASXName(ASX asx, String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ASX.COLUMN_TITLE, name);
+        db.update(ASX.TABLE_NAME, values, ASX.COLUMN_ID + " = ?", new String[]{String.valueOf(asx.getId())});
+        db.close();
     }
 
     public void addXE(XE xe){
@@ -131,11 +162,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return XEs;
     }
 
+    public HashMap<Long,ASX> getAllASX(){
+        HashMap<Long,ASX> ASXs = new LinkedHashMap<Long,ASX>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + ASX.TABLE_NAME, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                ASX asx = new ASX(cursor.getLong(0),cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                ASXs.put(asx.getId(), asx);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return ASXs;
+    }
+
     public ArrayList<ListItem> getAllItems(){
         ArrayList<ListItem> allItems = new ArrayList<ListItem>();
 
         allItems.addAll(getAllPackages().values());
         allItems.addAll(getAllXE().values());
+        allItems.addAll(getAllASX().values());
 
         return allItems;
     }

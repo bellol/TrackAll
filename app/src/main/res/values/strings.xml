@@ -8,4 +8,5 @@
     <string name="title_activity_view_package">ViewPackageActivity</string>
     <string name="title_activity_add_other">AddOtherActivity</string>
     <string name="title_activity_add_xe">AddXEActivity</string>
+    <string name="title_activity_add_asx">AddASXActivity</string>
 </resources>

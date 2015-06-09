@@ -6,7 +6,8 @@ package com.example.bellng.trackall.enums;
 public enum OtherItem {
 
     XE("XE Currency Conversion","file:///android_asset/xe.png"),
-    Myki("Myki Account Balance","file:///android_asset/myki.jpeg");
+    Myki("Myki Account Balance","file:///android_asset/myki.jpeg"),
+    ASX("ASX Top 50 Stock Price","file:///android_asset/asx.jpg");
 
     private String displayName,iconURL;
 

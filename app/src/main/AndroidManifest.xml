@@ -36,6 +36,14 @@
             android:name=".activities.AddXEActivity"
             android:label="@string/title_activity_add_xe" >
         </activity>
+        <activity
+            android:name=".activities.AddASXActivity"
+            android:label="@string/title_activity_add_asx"
+            android:parentActivityName=".activities.AddOtherActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bellng.trackall.activities.AddOtherActivity" />
+        </activity>
     </application>
 
 </manifest>
