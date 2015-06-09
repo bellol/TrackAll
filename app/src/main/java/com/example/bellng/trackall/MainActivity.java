@@ -51,11 +51,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         handler = new Handler();
+        dbHelper = new DatabaseHelper(getApplicationContext());
 
         itemListView = (ListView) findViewById(R.id.itemListView);
         registerForContextMenu(itemListView);
 
-        dbHelper = new DatabaseHelper(getApplicationContext());
         itemList = dbHelper.getAllItems();
 
         for(ListItem li : itemList) li.update();
@@ -90,6 +90,10 @@ public class MainActivity extends Activity {
 
         handler.postDelayed(updateListView, 2000);
     }
+
+    /**
+     * This task polls the item list and will stop the refreshing animation when it has completed
+     */
     private Runnable updateListView = new Runnable() {
         public void run() {
             if(stillRefreshing()){
@@ -101,6 +105,10 @@ public class MainActivity extends Activity {
         }
     };
 
+    /**
+     * This sees if any of the items in itemList are in the process of updating
+     * @return
+     */
     public boolean stillRefreshing(){
         for(ListItem i : itemList){
             if(i.isUpdating()) return true;
@@ -144,8 +152,12 @@ public class MainActivity extends Activity {
                 ListItem item = (ListItem) data.getSerializableExtra("item");
                 item.addToDatabase(dbHelper);
                 item.update();
+
+                //add the item to the list that we display
                 itemList.add(item);
                 itemAdapter.notifyDataSetChanged();
+
+                // check if the item has updated after 2000ms and then refresh the list
                 handler.postDelayed(updateListView, 2000);
             }
         }
@@ -181,7 +193,7 @@ public class MainActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId()) {
-            case R.id.action_edit:
+            case R.id.action_edit: // Create a popup input dialog to edit name
                 LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
                 View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -194,8 +206,11 @@ public class MainActivity extends Activity {
                             public void onClick(DialogInterface dialog, int id) {
                                 ListItem li = itemList.get(info.position);
                                 li.editName(dbHelper,editText.getText().toString());
+
+                                // Remove the old item and replace it with the one with the edited name
                                 itemList.remove(info.position);
                                 itemList.add(li);
+
                                 itemAdapter.notifyDataSetChanged();
                             }
                         })
@@ -221,23 +236,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void refreshList(View v){
-        for(ListItem i : itemList) i.update();
 
-        itemAdapter.notifyDataSetChanged();
-    }
-
-    public void removeListItem(ListItem item){
-        for(ListItem li : itemList){
-            if(item.equals(li)){
-                li.deleteFromDatabase(dbHelper);
-                break;
-            }
-        }
-    }
-
+    /**
+     * The adapter for the listview in this activity
+     */
     class ItemAdapter extends BaseAdapter {
-
         Context context;
         ArrayList<ListItem> items;
 
@@ -277,9 +280,5 @@ public class MainActivity extends Activity {
 
             return view;
         }
-    }
-
-    protected void onPostExecute(Void result) {
-        System.out.println("*****************************************************");
     }
 }
