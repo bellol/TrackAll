@@ -54,6 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(XE.TABLE_NAME, XE.COLUMN_ID + " = ?", new String[]{String.valueOf(xe.getId())});
+
+        db.close();
     }
 
     public void editXEName(XE xe, String name){
@@ -62,6 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(XE.COLUMN_TITLE, name);
         db.update(XE.TABLE_NAME, values, XE.COLUMN_ID + " = ?", new String[]{String.valueOf(xe.getId())});
+        db.close();
     }
 
     public void addPackage(Package p){
@@ -80,6 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(Package.TABLE_NAME, Package.COLUMN_ID + " = ?", new String[]{String.valueOf(p.getId())});
+        db.close();
     }
 
     public void editPackageName(Package p, String name){
@@ -88,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(Package.COLUMN_TITLE, name);
         db.update(Package.TABLE_NAME, values, Package.COLUMN_ID + " = ?", new String[]{String.valueOf(p.getId())});
+        db.close();
     }
 
     public HashMap<Long,Package> getAllPackages(){
@@ -104,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-
+        db.close();
         return packages;
     }
 
@@ -122,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-
+        db.close();
         return XEs;
     }
 
