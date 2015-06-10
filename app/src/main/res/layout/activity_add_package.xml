@@ -53,5 +53,14 @@
         android:layout_below="@+id/courier"
         android:layout_alignParentStart="true"
         android:spinnerMode="dropdown"
-        android:layout_alignParentEnd="true" />
+        android:layout_toStartOf="@+id/detectButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Detect"
+        android:id="@+id/detectButton"
+        android:layout_alignTop="@+id/courierSpinner"
+        android:layout_alignParentEnd="true"
+        android:onClick="detect" />
 </RelativeLayout>

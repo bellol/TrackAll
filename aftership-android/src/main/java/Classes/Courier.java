@@ -59,13 +59,7 @@ public class Courier {
 
     @Override
     public String toString() {
-        return "Courier{" +
-                "slug='" + slug + '\'' +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", other_name='" + other_name + '\'' +
-                ", web_url='" + web_url + '\'' +
-                '}';
+        return name;
     }
 
     public String getSlug() {
