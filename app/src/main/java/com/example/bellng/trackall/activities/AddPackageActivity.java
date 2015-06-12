@@ -27,7 +27,6 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
 
     Spinner spinner;
     EditText titleInput,trackingInput;
-    AsyncTaskCompleteListener self = this;
     List<Courier> couriers;
 
     private String API_KEY = "652c08bc-f1b1-45dd-99bf-0baa6d576f91";
@@ -43,11 +42,9 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
 
 
         spinner = (Spinner) findViewById(R.id.courierSpinner);
-        /*
-        ArrayAdapter<PackageType> adapter = new ArrayAdapter<PackageType>(this,android.R.layout.simple_spinner_item,PackageType.values());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        */
+
+        // get the courier list and fill out the spinner with returned couriers
+        new ConnectionAPI(API_KEY, ConnectionAPIMethods.getCouriers, this).execute();
     }
 
     @Override
@@ -64,11 +61,10 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add_package) {
-            //TODO: check if it is valid and if so, create the object and pass it back to main
-
             String title = titleInput.getText().toString();
             String tracking = trackingInput.getText().toString();
-            //check for null
+
+            //check if any of the fields are empty. if so, display an error dialog
             if(title == null || title.equals("") || tracking == null || tracking.equals("") || spinner.getSelectedItem() == null){
                 new AlertDialog.Builder(this)
                         .setTitle("INVALID INPUT")
@@ -82,7 +78,6 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
                         .show();
             }
             else {
-
                 Courier type = (Courier) spinner.getSelectedItem();
                 Intent i = new Intent();
 
@@ -97,11 +92,26 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This method attempts to detect which courier the tracking number belongs to.
+     * Sets the spinner to detected courier(s) if successful
+     * @param v
+     */
     public void detect(View v){
         String tracking = trackingInput.getText().toString();
         if(!(tracking == null || tracking.equals(""))) {
             new ConnectionAPI(API_KEY, ConnectionAPIMethods.detectCouriers, this, trackingInput.getText().toString()).execute();
         }
+    }
+
+    /**
+     * Fill the spinner with items from "list"
+     * @param list
+     */
+    public void setSpinnerItems(List<Courier> list){
+        ArrayAdapter<Courier> adapter = new ArrayAdapter<Courier>(this,android.R.layout.simple_spinner_item,list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
 
     public void onTaskComplete(ConnectionAPI result) {
@@ -113,12 +123,14 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
         }
 
         switch (result.getMethod().getNumberMethod()) {
+            case 7://getCouriers(7)
+                couriers = (List<Courier>) result.getReturn();
+                setSpinnerItems(couriers);
+                break;
             case 8://detectCouriers(8)
                 couriers = (List<Courier>) result.getReturn(); //The detected Couriers
                 if(couriers.size() > 0){
-                    ArrayAdapter<Courier> adapter = new ArrayAdapter<Courier>(this,android.R.layout.simple_spinner_item,couriers);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinner.setAdapter(adapter);
+                    setSpinnerItems(couriers);
                 }
                 break;
         }

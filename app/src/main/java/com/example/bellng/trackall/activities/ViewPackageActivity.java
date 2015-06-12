@@ -43,6 +43,7 @@ public class ViewPackageActivity extends Activity {
 
         ListView checkpointList = (ListView) findViewById(R.id.checkpointList);
 
+        // If the package has checkpoints, display them in the listview
         if(p.checkpoints != null) {
             ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>(p.checkpoints);
 
@@ -75,12 +76,12 @@ public class ViewPackageActivity extends Activity {
             alertDialogBuilder.setView(promptView);
 
             final EditText editText = (EditText) promptView.findViewById(R.id.editText);
-            // setup a dialog window
+            // setup a dialog window to allow for input of text (the name to be)
             alertDialogBuilder.setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            p.title = editText.getText().toString();
-                            setTitle(editText.getText().toString());
+                            p.title = editText.getText().toString(); // title of package object
+                            setTitle(editText.getText().toString()); // title of this activity
                             Intent intent = new Intent();
                             intent.putExtra("action","edit");
                             intent.putExtra("item",p);

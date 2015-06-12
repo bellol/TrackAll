@@ -39,6 +39,7 @@ public class AddOtherActivity extends Activity {
         setContentView(R.layout.activity_add_other);
 
         setTitle("Add Other Item");
+
         // grab the listview
         listView = (ListView) findViewById(R.id.listView);
 

@@ -52,22 +52,26 @@ public class MainActivity extends Activity {
 
         handler = new Handler();
         dbHelper = new DatabaseHelper(getApplicationContext());
-
+        pullRefresh = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         itemListView = (ListView) findViewById(R.id.itemListView);
         registerForContextMenu(itemListView);
 
+        // Get all the items from the database and update the status
         itemList = dbHelper.getAllItems();
-
-        for(ListItem li : itemList) li.update();
+        for(ListItem li : itemList){
+            li.update();
+        }
 
         itemAdapter = new ItemAdapter(this,itemList);
         itemListView.setAdapter(itemAdapter);
 
+        // Set the list to be clickable
         itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ListItem result = (ListItem) itemListView.getAdapter().getItem(i);
 
+                // start the view package activity if the tapped item is a package
                 if (result instanceof Package) {
                     Intent intent = new Intent(getApplicationContext(), ViewPackageActivity.class);
                     intent.putExtra("r", (Serializable) result);
@@ -78,12 +82,13 @@ public class MainActivity extends Activity {
             }
         });
 
-        pullRefresh = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-
+        // This is called when the list is pulled down (to refresh)
         pullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                for(ListItem i : itemList) i.update();
+                for(ListItem i : itemList){
+                    i.update();
+                }
                 handler.postDelayed(updateListView, 1000);
             }
         });
@@ -93,10 +98,14 @@ public class MainActivity extends Activity {
 
     /**
      * This task polls the item list and will stop the refreshing animation when it has completed
+     *
      */
     private Runnable updateListView = new Runnable() {
         public void run() {
             if(stillRefreshing()){
+                int count = 0;
+                for(ListItem i : itemList) if(i.isUpdating()) count++;
+                System.out.println(count);
                 handler.postDelayed(updateListView,500);
             }else {
                 itemAdapter.notifyDataSetChanged();

@@ -85,7 +85,12 @@ public class ASX implements ListItem, Serializable {
     public void update() {
         if(!updating) {
             updating = true;
-            new RetrievePriceTask().execute("http://www.google.com/finance?q=ASX:" + ticker);
+
+            // Set the url to be scraped
+            String url = "http://www.google.com/finance?q=ASX:" + ticker;
+
+            // async task to scrape the passed URL
+            new RetrievePriceTask().execute(url);
         }
     }
 
@@ -116,9 +121,15 @@ public class ASX implements ListItem, Serializable {
 
         protected String doInBackground(String... urls) {
             try {
+                // Set the user agent to prevent being detected as a bot
                 String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30";
-                Document doc = Jsoup.connect(urls[0]).userAgent(ua).get();
+
+                // Get the document from the URL
+                Document doc = Jsoup.connect(urls[0]).userAgent(ua).timeout(5000).get();
+
+                // Extract the required value from the appropriate tag
                 price = doc.select("span[class=pr]").first().children().first().ownText();
+
                 return null;
             } catch (Exception e) {
                 this.exception = e;
@@ -127,8 +138,6 @@ public class ASX implements ListItem, Serializable {
         }
 
         protected void onPostExecute(String feed) {
-            // TODO: check this.exception
-            // TODO: do something with the feed
             updating = false;
         }
     }

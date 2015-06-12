@@ -39,15 +39,14 @@ public class AddASXActivity extends Activity {
 
         listOfCompanies = (ListView) findViewById(R.id.listOfCompanies);
 
+        // Async task to retrieve the ASX 50 and set the listView
         new RetrieveTopFiftyTask().execute("http://www.asx.com.au/asx/widget/topCompanies.do");
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_asx, menu);
+       // getMenuInflater().inflate(R.menu.menu_add_asx, menu);
         return true;
     }
 
@@ -57,11 +56,6 @@ public class AddASXActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -73,9 +67,14 @@ public class AddASXActivity extends Activity {
         protected String doInBackground(String... urls) {
             try {
                 String code,company;
+
+                // Set the user agent to avoid being detected as a bot
                 String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30";
+
+                // Get the document from the passed URL
                 Document doc = Jsoup.connect(urls[0]).userAgent(ua).get();
 
+                // For every table row (<tr>) in tbody
                 for(Element e : doc.select("tbody").select("tr")){
                     code = e.select("td[class=code]").first().ownText();
                     company = e.select("a[title^=Company information for]").first().ownText();
@@ -100,9 +99,13 @@ public class AddASXActivity extends Activity {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     String result = (String) listOfCompanies.getAdapter().getItem(i);
 
+                    // Grab the ticker code from the title (first three characters)
                     String ticker = result.substring(0,3);
+
+                    // Grab the company name from the title
                     String company = result.substring(6);
 
+                    // Creates the object and sends it back via an intent
                     ASX asx = new ASX(ticker + " Stock Price",ticker,company);
                     Intent intent = new Intent();
                     intent.putExtra("item",asx);

@@ -32,6 +32,7 @@ public class AddXEActivity extends Activity {
         fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         toSpinner = (Spinner) findViewById(R.id.toSpinner);
 
+        // populate the spinners with the values of the CurrencyCode enum
         ArrayAdapter<CurrencyCode> adapter = new ArrayAdapter<CurrencyCode>(this,android.R.layout.simple_spinner_item,CurrencyCode.values());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fromSpinner.setAdapter(adapter);
@@ -41,7 +42,7 @@ public class AddXEActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_add_xe, menu);
+        getMenuInflater().inflate(R.menu.menu_add_xe, menu);
         return true;
     }
 
@@ -54,7 +55,8 @@ public class AddXEActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
-            //TODO: validate inputs first
+            // Attempt to create the XE object and send it back via an intent
+            // if not successful, display a popup dialog instead
             try {
                 String amountString = amountInput.getText().toString();
                 XE xe = new XE("Currency Conversion", Integer.parseInt(amountString), fromSpinner.getSelectedItem().toString(), toSpinner.getSelectedItem().toString());

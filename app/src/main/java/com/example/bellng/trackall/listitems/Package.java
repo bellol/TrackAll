@@ -33,8 +33,8 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
 
     private long id;
     public String title,trackingNumber,slugName,description;
-    public Tracking tracking;
-    public List<Checkpoint> checkpoints; // change back to private
+    public Tracking tracking; // stores the information about the shipment
+    public List<Checkpoint> checkpoints;
     private String API_KEY = "652c08bc-f1b1-45dd-99bf-0baa6d576f91";
     private boolean updating;
 
@@ -117,9 +117,11 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
     public void update() {
         if(!updating) {
             updating = true;
-            Tracking t = tracking;
-            if (t == null) t = createTracking();
-            new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this, t).execute();
+
+            if (tracking == null) tracking = createTracking();
+
+            // get the information for this "tracking" from the API
+            new ConnectionAPI(API_KEY, ConnectionAPIMethods.getTrackingByNumber, this, tracking).execute();
         }
     }
 

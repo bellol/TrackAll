@@ -80,8 +80,11 @@ public class XE implements ListItem,Serializable {
     @Override
     public void update() {
         if(!updating) {
+            // the URL to be scraped
             String url = "http://www.xe.com/currencyconverter/convert/?Amount=" + amount + "&From=" + from + "&To=" + to;
             updating = true;
+
+            // async task to scrape passed URL
             new RetrieveConversionTask().execute(url);
         }
     }
@@ -123,10 +126,18 @@ public class XE implements ListItem,Serializable {
 
         protected String doInBackground(String... urls) {
             try {
+                // Set user agent to avoid being detected as a bot
                 String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30";
-                Document doc = Jsoup.connect(urls[0]).userAgent(ua).get();
+
+                // Get the document from the url
+                Document doc = Jsoup.connect(urls[0]).userAgent(ua).timeout(5000).get();
+
+                // Extract the required value from the page
                 converted = doc.select("td[class=rightCol]").first().ownText();
+
+                // Since there is an extra "space" character at the end, remove it
                 if(converted != null || !converted.equals("")) converted = converted.substring(0, converted.length() - 1);
+
                 return null;
             } catch (Exception e) {
                 this.exception = e;
