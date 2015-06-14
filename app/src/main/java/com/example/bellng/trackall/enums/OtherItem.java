@@ -3,6 +3,10 @@ package com.example.bellng.trackall.enums;
 /**
  * Created by bellng on 8/06/2015.
  */
+
+/**
+ * The available objects in the "Add Other" activity
+ */
 public enum OtherItem {
 
     XE("XE Currency Conversion","file:///android_asset/xe.png"),

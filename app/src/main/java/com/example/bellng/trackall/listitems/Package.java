@@ -62,6 +62,12 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         updating = false;
     }
 
+    /**
+     * This method retrieves the "Tracking" object from the API
+     *
+     * The object is created and then passed into the API for it added
+     * @return
+     */
     private Tracking createTracking(){
         Tracking t = new Tracking(trackingNumber);
         t.setSlug(slugName);
@@ -147,9 +153,8 @@ public class Package implements ListItem, Serializable, AsyncTaskCompleteListene
         updating = false;
 
         if (result.getException()!=null) {
-            System.out.println(result.getException().getMessage());//do something with the exception
+            System.out.println(result.getException().getMessage());
             return;
-            //TODO: HANDLE EXCEPTION PROPERLY
         }
 
         switch (result.getMethod().getNumberMethod()) {

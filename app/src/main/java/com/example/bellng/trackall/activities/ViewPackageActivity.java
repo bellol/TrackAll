@@ -47,6 +47,7 @@ public class ViewPackageActivity extends Activity {
         if(p.checkpoints != null) {
             ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>(p.checkpoints);
 
+            // Reverse the list so the latest checkpoint is on the top of the list
             Collections.reverse(checkpoints);
 
             CheckpointAdapter adapter = new CheckpointAdapter(this, checkpoints);

@@ -103,9 +103,6 @@ public class MainActivity extends Activity {
     private Runnable updateListView = new Runnable() {
         public void run() {
             if(stillRefreshing()){
-                int count = 0;
-                for(ListItem i : itemList) if(i.isUpdating()) count++;
-                System.out.println(count);
                 handler.postDelayed(updateListView,500);
             }else {
                 itemAdapter.notifyDataSetChanged();

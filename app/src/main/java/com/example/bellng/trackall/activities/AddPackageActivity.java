@@ -60,6 +60,7 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         if (id == R.id.action_add_package) {
             String title = titleInput.getText().toString();
             String tracking = trackingInput.getText().toString();
@@ -77,6 +78,7 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
             }
+            // otherwise, create the package object and send it back via an intent
             else {
                 Courier type = (Courier) spinner.getSelectedItem();
                 Intent i = new Intent();
@@ -119,7 +121,6 @@ public class AddPackageActivity extends Activity implements AsyncTaskCompleteLis
         if (result.getException()!=null) {
             System.out.println(result.getException().getMessage());//do something with the exception
             return;
-            //TODO: HANDLE EXCEPTION PROPERLY
         }
 
         switch (result.getMethod().getNumberMethod()) {

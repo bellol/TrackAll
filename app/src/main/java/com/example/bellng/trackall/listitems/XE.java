@@ -146,8 +146,6 @@ public class XE implements ListItem,Serializable {
         }
 
         protected void onPostExecute(String feed) {
-            // TODO: check this.exception
-            // TODO: do something with the feed
             updating = false;
         }
     }

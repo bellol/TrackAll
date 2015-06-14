@@ -35,8 +35,10 @@ public class AddASXActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_asx);
 
+        // The array
         companyList = new ArrayList<String>();
 
+        // The ListView
         listOfCompanies = (ListView) findViewById(R.id.listOfCompanies);
 
         // Async task to retrieve the ASX 50 and set the listView
@@ -74,7 +76,7 @@ public class AddASXActivity extends Activity {
                 // Get the document from the passed URL
                 Document doc = Jsoup.connect(urls[0]).userAgent(ua).get();
 
-                // For every table row (<tr>) in tbody
+                // For every table row (<tr>) in <tbody>
                 for(Element e : doc.select("tbody").select("tr")){
                     code = e.select("td[class=code]").first().ownText();
                     company = e.select("a[title^=Company information for]").first().ownText();
